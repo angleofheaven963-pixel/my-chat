@@ -1,0 +1,65 @@
+{
+  "settings": {
+    "appName": "My Chat",
+    "tagline": "Fast, Simple & Private Messaging",
+    "announcement": "Welcome to My Chat! Respect everyone in the chat.",
+    "themeColor": "#00a884",
+    "allowSignups": true
+  },
+  "users": [
+    {
+      "phone": "03213850963",
+      "name": "muskan",
+      "pinHash": "756a6524cdb2d4eaad13228bd69d6266ffbb77c78e7f3cfde29e2667f38d3a2d",
+      "about": "Hey there! I am using My Chat.",
+      "avatarColor": "#00a884",
+      "blocked": false,
+      "createdAt": "2026-11-16T12:05:35.082Z"
+    },
+    {
+      "phone": "03062485509",
+      "name": "Laiba",
+      "pinHash": "756a6524cdb2d4eaad13228bd69d6266ffbb77c78e7f3cfde29e2667f38d3a2d",
+      "about": "Hey there! I am using My Chat.",
+      "avatarColor": "#128c7e",
+      "blocked": false,
+      "createdAt": "2026-11-16T12:46:48.123Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "73f27753-81f6-4b5e-a1d2-70ce32e6e88d",
+      "roomId": "global",
+      "fromPhone": "03213850963",
+      "fromName": "muskan",
+      "toPhone": "global",
+      "text": "hello🥳",
+      "time": "05:06 PM",
+      "timestamp": 1794830797310
+    },
+    {
+      "id": "8fe40b45-3155-4308-aad4-6dd2ac488263",
+      "roomId": "global",
+      "fromPhone": "03213850963",
+      "fromName": "muskan",
+      "toPhone": "global",
+      "text": "😍",
+      "time": "05:12 PM",
+      "timestamp": 1794831146290
+    },
+    {
+      "id": "5cc9b158-298b-4408-9782-68d6dedf5a39",
+      "roomId": "03062485509_03213850963",
+      "fromPhone": "03213850963",
+      "fromName": "muskan",
+      "toPhone": "03062485509",
+      "text": "hey",
+      "time": "05:48 PM",
+      "timestamp": 1794833311235
+    }
+  ],
+  "sessions": {
+    "9d196501337834f20893360103ba2a0039661a96f912e19f": "03213850963",
+    "7b0446647017871bd6d35c863b955ecc1c30d8e4813fc362": "03062485509"
+  }
+}

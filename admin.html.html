@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Chat — Admin Panel</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 20px; }
+    .container { max-width: 1050px; margin: 0 auto; }
+
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    h1, h2 { margin-bottom: 12px; }
+    input[type="text"], input[type="password"] {
+      width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #475569;
+      background: #0f172a; color: #fff; font-size: 14px; margin-bottom: 12px;
+    }
+    button {
+      padding: 9px 16px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;
+    }
+    .btn-green { background: #00a884; color: #fff; }
+    .btn-blue { background: #3b82f6; color: #fff; }
+    .btn-red { background: #ef4444; color: #fff; }
+    .btn-amber { background: #f59e0b; color: #111; }
+
+    #login-box { max-width: 380px; margin: 80px auto; }
+    #dashboard { display: none; }
+
+    .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; }
+    .stat-card span { font-size: 13px; color: #94a3b8; }
+    .stat-card strong { display: block; font-size: 28px; margin-top: 4px; color: #00a884; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+    label { display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 5px; }
+    .row-inline { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #334155; }
+    th { color: #94a3b8; font-size: 12px; text-transform: uppercase; }
+    .badge { padding: 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .badge-on { background: #14532d; color: #86efac; }
+    .badge-off { background: #334155; color: #cbd5e1; }
+    .badge-blk { background: #7f1d1d; color: #fca5a5; }
+    .toast { color: #4ade80; font-size: 13px; margin-top: 8px; min-height: 18px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Admin Login -->
+    <div class="card" id="login-box">
+      <h2>My Chat Admin Login</h2>
+      <p style="font-size: 13px; color: #94a3b8; margin-bottom: 14px;">Default password: <code>admin123</code></p>
+      <form id="admin-login-form">
+        <input id="admin-pass" type="password" placeholder="Enter Admin Password" required />
+        <button class="btn-green" type="submit" style="width:100%;">Open Admin Panel</button>
+        <div class="toast" id="login-err" style="color:#f87171;"></div>
+      </form>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="dashboard">
+      <div class="header">
+        <h1>🛠️ My Chat — Admin Control Panel</h1>
+        <div style="display:flex; gap:10px;">
+          <a href="/" target="_blank"><button class="btn-blue">Open My Chat</button></a>
+          <button class="btn-green" id="refresh-btn">Refresh</button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><span>Total Users</span><strong id="st-users">0</strong></div>
+        <div class="stat-card"><span>Online Right Now</span><strong id="st-online">0</strong></div>
+        <div class="stat-card"><span>Total Messages</span><strong id="st-msgs">0</strong></div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Live App Settings (No-Code Editor) -->
+        <div class="card">
+          <h2>App Appearance & Settings</h2>
+          <label>App Name</label>
+          <input id="set-name" type="text" />
+          <label>Tagline (Login Screen)</label>
+          <input id="set-tagline" type="text" />
+          <label>Top Announcement Banner (Leave empty to hide)</label>
+          <input id="set-ann" type="text" />
+          <label>Theme Color</label>
+          <div class="row-inline">
+            <input id="set-color" type="color" style="width:55px; height:38px; border:none; background:none; cursor:pointer;" />
+            <button type="button" class="btn-green" onclick="setPreset('#00a884')">WhatsApp Green</button>
+            <button type="button" class="btn-blue" onclick="setPreset('#2563eb')">Blue</button>
+            <button type="button" style="background:#7c3aed; color:#fff;" onclick="setPreset('#7c3aed')">Purple</button>
+          </div>
+          <div class="row-inline">
+            <input id="set-signups" type="checkbox" style="width:18px; height:18px;" />
+            <label for="set-signups" style="margin:0;">Allow New Users to Register</label>
+          </div>
+          <button class="btn-green" id="save-settings-btn">Save & Update Live</button>
+          <div class="toast" id="settings-toast"></div>
+        </div>
+
+        <!-- Broadcast & Moderation -->
+        <div class="card">
+          <h2>Official Broadcast & Chat Control</h2>
+          <label>Send Official Admin Message to Group Chat</label>
+          <input id="broadcast-text" type="text" placeholder="e.g. New update coming tonight!" />
+          <button class="btn-blue" id="broadcast-btn">Send Announcement</button>
+          <div class="toast" id="broadcast-toast"></div>
+
+          <hr style="border-color:#334155; margin: 20px 0;" />
+          <label>Danger Zone</label>
+          <button class="btn-red" id="clear-global-btn">Clear Entire Group Chat</button>
+        </div>
+      </div>
+
+      <!-- Users Management -->
+      <div class="card" style="overflow-x:auto;">
+        <h2>Registered Users</h2>
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Phone</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="users-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Message Moderation -->
+      <div class="card" style="overflow-x:auto;">
+        <h2>Recent Messages (Moderation)</h2>
+        <table>
+          <thead>
+            <tr><th>From</th><th>To</th><th>Message</th><th>Time</th><th>Action</th></tr>
+          </thead>
+          <tbody id="msgs-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let adminToken = localStorage.getItem('mychat_admin_token') || '';
+
+    function setPreset(hex) { document.getElementById('set-color').value = hex; }
+
+    async function api(url, method = 'GET', body = null) {
+      const opts = { method, headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken } };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(url, opts);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Request failed');
+      return data;
+    }
+
+    document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const res = await api('/api/admin/login', 'POST', { password: document.getElementById('admin-pass').value });
+        adminToken = res.adminToken;
+        localStorage.setItem('mychat_admin_token', adminToken);
+        loadDashboard();
+      } catch (err) {
+        document.getElementById('login-err').textContent = err.message;
+      }
+    });
+
+    async function loadDashboard() {
+      try {
+        const data = await api('/api/admin/dashboard');
+        document.getElementById('login-box').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+
+        document.getElementById('st-users').textContent = data.stats.totalUsers;
+        document.getElementById('st-online').textContent = data.stats.onlineCount;
+        document.getElementById('st-msgs').textContent = data.stats.totalMessages;
+
+        document.getElementById('set-name').value = data.settings.appName || '';
+        document.getElementById('set-tagline').value = data.settings.tagline || '';
+        document.getElementById('set-ann').value = data.settings.announcement || '';
+        document.getElementById('set-color').value = data.settings.themeColor || '#00a884';
+        document.getElementById('set-signups').checked = Boolean(data.settings.allowSignups);
+
+        // Users table
+        const uBody = document.getElementById('users-tbody');
+        uBody.innerHTML = '';
+        data.users.forEach((u) => {
+          const tr = document.createElement('tr');
+
+          const tdName = document.createElement('td'); tdName.textContent = u.name;
+          const tdPhone = document.createElement('td'); tdPhone.textContent = u.phone;
+          const tdStatus = document.createElement('td');
+          const badge = document.createElement('span');
+          badge.className = `badge ${u.blocked ? 'badge-blk' : (u.online ? 'badge-on' : 'badge-off')}`;
+          badge.textContent = u.blocked ? 'Blocked' : (u.online ? 'Online' : 'Offline');
+          tdStatus.appendChild(badge);
+
+          const tdAct = document.createElement('td');
+          const blkBtn = document.createElement('button');
+          blkBtn.className = 'btn-amber';
+          blkBtn.style.marginRight = '6px';
+          blkBtn.textContent = u.blocked ? 'Unblock' : 'Block';
+          blkBtn.onclick = async () => { await api(`/api/admin/users/${encodeURIComponent(u.phone)}/toggle-block`, 'POST'); loadDashboard(); };
+
+          const delBtn = document.createElement('button');
+          delBtn.className = 'btn-red';
+          delBtn.textContent = 'Delete';
+          delBtn.onclick = async () => {
+            if (confirm(`Delete user ${u.name}?`)) {
+              await api(`/api/admin/users/${encodeURIComponent(u.phone)}`, 'DELETE');
+              loadDashboard();
+            }
+          };
+          tdAct.append(blkBtn, delBtn);
+          tr.append(tdName, tdPhone, tdStatus, tdAct);
+          uBody.appendChild(tr);
+        });
+
+        // Messages table
+        const mBody = document.getElementById('msgs-tbody');
+        mBody.innerHTML = '';
+        data.recentMessages.forEach((m) => {
+          const tr = document.createElement('tr');
+          const td1 = document.createElement('td'); td1.textContent = m.fromName || m.fromPhone;
+          const td2 = document.createElement('td'); td2.textContent = m.toPhone === 'global' ? 'Group' : m.toPhone;
+          const td3 = document.createElement('td'); td3.textContent = m.text;
+          const td4 = document.createElement('td'); td4.textContent = m.time;
+          const td5 = document.createElement('td');
+          const del = document.createElement('button');
+          del.className = 'btn-red';
+          del.textContent = 'Delete';
+          del.onclick = async () => { await api(`/api/admin/messages/${encodeURIComponent(m.id)}`, 'DELETE'); loadDashboard(); };
+          td5.appendChild(del);
+          tr.append(td1, td2, td3, td4, td5);
+          mBody.appendChild(tr);
+        });
+      } catch (err) {
+        localStorage.removeItem('mychat_admin_token');
+        document.getElementById('login-box').style.display = 'block';
+        document.getElementById('dashboard').style.display = 'none';
+      }
+    }
+
+    document.getElementById('save-settings-btn').addEventListener('click', async () => {
+      await api('/api/admin/settings', 'POST', {
+        appName: document.getElementById('set-name').value,
+        tagline: document.getElementById('set-tagline').value,
+        announcement: document.getElementById('set-ann').value,
+        themeColor: document.getElementById('set-color').value,
+        allowSignups: document.getElementById('set-signups').checked
+      });
+      document.getElementById('settings-toast').textContent = '✅ Settings updated live for all users!';
+      setTimeout(() => document.getElementById('settings-toast').textContent = '', 3000);
+    });
+
+    document.getElementById('broadcast-btn').addEventListener('click', async () => {
+      const text = document.getElementById('broadcast-text').value;
+      if (!text.trim()) return;
+      await api('/api/admin/broadcast', 'POST', { text });
+      document.getElementById('broadcast-text').value = '';
+      document.getElementById('broadcast-toast').textContent = '✅ Announcement sent!';
+      loadDashboard();
+    });
+
+    document.getElementById('clear-global-btn').addEventListener('click', async () => {
+      if (confirm('Clear all messages in Group Chat?')) {
+        await api('/api/admin/clear-global', 'POST');
+        loadDashboard();
+      }
+    });
+
+    document.getElementById('refresh-btn').addEventListener('click', loadDashboard);
+    if (adminToken) loadDashboard();
+  </script>
+</body>
+</html>

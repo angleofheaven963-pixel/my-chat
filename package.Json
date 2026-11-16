@@ -1,0 +1,14 @@
+{
+  "name": "my-chat",
+  "version": "1.0.0",
+  "description": "My Chat - WhatsApp Style Chat App with Admin Panel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "debug": "^4.4.3",
+    "express": "^4.22.3",
+    "socket.io": "^4.8.4"
+  }
+}
